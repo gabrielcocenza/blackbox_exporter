@@ -1,4 +1,5 @@
 # Run only staticcheck for now. Additional linters will be enabled one-by-one.
+version: "2"
 linters:
   disable-all: true
   enable:

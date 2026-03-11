@@ -970,7 +970,7 @@ func TestFailIfBodyMatchesRegexp(t *testing.T) {
 	for name, testcase := range testcases {
 		t.Run(name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				fmt.Fprintf(w, testcase.respBody)
+				fmt.Fprint(w, testcase.respBody)
 			}))
 			defer ts.Close()
 

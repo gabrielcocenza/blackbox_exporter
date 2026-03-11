@@ -80,8 +80,10 @@ func run() int {
 	logger := promslog.New(promslogConfig)
 	rh := &prober.ResultHistory{MaxResults: *historyLimit}
 
-	allowedLevel := &promslog.AllowedLevel{}
-	_ = allowedLevel.Set(*logLevelProber)
+	probeLogLevel := promslog.NewLevel()
+	if err := probeLogLevel.Set(*logLevelProber); err != nil {
+		logger.Warn("Error setting log prober level, log prober level unchanged", "err", err, "current_level", probeLogLevel.String())
+	}
 
 	logger.Info("Starting blackbox_exporter", "version", version.Info())
 	logger.Info(version.BuildContext())
@@ -186,7 +188,7 @@ func run() int {
 		sc.Lock()
 		conf := sc.C
 		sc.Unlock()
-		prober.Handler(w, r, conf, logger, rh, *timeoutOffset, nil, moduleUnknownCounter, allowedLevel)
+		prober.Handler(w, r, conf, logger, rh, *timeoutOffset, nil, moduleUnknownCounter, probeLogLevel)
 	})
 	http.HandleFunc(*routePrefix, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
